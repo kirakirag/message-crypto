@@ -1,22 +1,33 @@
 import gnupg
-from pki.KeyManager import KeyManager
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+ch.setFormatter(formatter)
+
+logger.addHandler(ch)
 
 class Encrypt:
     '''
-    Docs go here
+    A class for message encryption.
     '''
     def __init__(self):
         self.gpg = gnupg.GPG(gnupghome='./.gnupg')
-        self.key_manager = KeyManager()
     
     def encrypt_string(self, recipient, string):
         '''
-        this method encrypts the recieved string with recipient's public key
+        This method encrypts the received string with recipient's public key.
         '''
         try:
             encrypted = self.gpg.encrypt(string, recipient)
             return str(encrypted)
         except Exception as e:
-            print(e)
+            logger.error(f'{e} -- Unable to encrypt the provided string.')
 
         

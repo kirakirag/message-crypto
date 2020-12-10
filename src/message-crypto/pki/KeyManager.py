@@ -1,22 +1,43 @@
 import gnupg
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+ch.setFormatter(formatter)
+
+logger.addHandler(ch)
 
 class KeyManager:
+    '''
+    A class for key import/export/deletion, provides access to user's public key.
+    '''
     def __init__(self):
         self.gpg = gnupg.GPG(gnupghome='./.gnupg')
-        with open('userfp', 'r') as f:
-            self.__user_fingerprint = f.read()
-    
+        try:
+            with open('userfp', 'r') as f:
+                self.__user_fingerprint = f.read()
+        except Exception as e:
+            logger.warning(f'{e} -- Unable to read user key fingerprint.')
+   
     def import_key(self, key_data):
         try:
-            return self.gpg.import_keys(key_data)
+            self.gpg.import_keys(key_data)
+            logger.info('Successfully imported public key.')
         except Exception as e:
-            print(e)
+            logger.error(f'{e} -- Unable to import public key.')
 
     def delete_key(self, fingerprint):
         try:
-            return self.gpg.delete_keys(fingerprint)
+            self.gpg.delete_keys(fingerprint)
+            logger.info('Deleted key with fingerprint {fingerprint}')
         except Exception as e:
-            print(e)
+            logger.error(f'{e} -- Unable to delete the key.')
 
     def get_user_key(self):
         key = str(self.gpg.export_keys(self.__user_fingerprint))
