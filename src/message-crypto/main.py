@@ -4,6 +4,7 @@ encrypt = pki.Encrypt.Encrypt()
 decrypt = pki.Decrypt.Decrypt(input('Enter your passphrase: '))
 keys = pki.KeyManager.KeyManager()
 
+
 # we need to run telegram here
 
 
@@ -35,6 +36,6 @@ keys = pki.KeyManager.KeyManager()
 
 # if key entry exists, we pass the plain text message
 
-# to encrypt.encrypt(key_id, msg) and then send 
+# to encrypt.encrypt(msg, key_id) and then send 
 
 # the armored output over telegram
