@@ -36,7 +36,14 @@ async def my_event_handler(event):
                 message_to_send = encrypt_string(recipient, input('Enter message: '))
                 await client.send_message(chat, message_to_send)
         else:
-            print(sender.username, event.date, event.text)
+            if 'BEGIN PGP MESSAGE' in event.text:
+                data = decrypt_string(event.text)
+                if data:
+                    print(sender.username, event.date, data)
+                else:
+                    print('\n\n\n===couldnt decrypt===\n\n\n')
+            else:
+                print(sender.username, event.date, event.text)
 
 
 async def main():
