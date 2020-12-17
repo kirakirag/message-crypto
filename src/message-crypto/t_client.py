@@ -2,12 +2,20 @@ import asyncio
 
 from telethon import TelegramClient, events
 
+from pki import Encrypt, Decrypt, KeyManager
+
 # Remember to use your own values from my.telegram.org!
 api_id = 'some_api_id'
 api_hash = 'some_api_hash'
 client = TelegramClient('anon', api_id, api_hash)
 dialog_num = 0
 me_id = 0
+
+encrypt = Encrypt.Encrypt()
+encrypt_string = encrypt.encrypt_string
+decrypt = Decrypt.Decrypt(input('Enter passphrase for your private key: '))
+decrypt_string = decrypt.decrypt_string
+keys = KeyManager.KeyManager()
 
 
 @client.on(events.NewMessage())
@@ -17,9 +25,11 @@ async def my_event_handler(event):
     global dialog_num
     if chat.id == dialog_num:
         if event.text == '/encrypt' and sender.id == me_id:
-            await client.delete_messages(chat.id, [event.id])
-            message_to_send = input()
-            await client.send_message(chat, message_to_send)
+            recipient = keys.get_key_by_id(chat.id)
+            if recipient:
+                await client.delete_messages(chat.id, [event.id])
+                message_to_send = encrypt_string(recipient, input('Enter message: '))
+                await client.send_message(chat, message_to_send)
         else:
             print(sender.username, event.date, event.text)
 

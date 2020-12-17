@@ -25,6 +25,10 @@ if not os.path.exists('signatures/'):
 else:
     logger.info('signatures directory already exists, skipping...')
 
+if not os.path.exists('keys'):
+    home_fs.touch(u'keys')
+    logger.info('Created id-key storage file.')
+
 if not os.path.exists('.gnupg/'):
     home_fs.makedir(u'.gnupg/')
     gpg = gnupg.GPG(gnupghome='.gnupg/')
@@ -38,7 +42,6 @@ if not os.path.exists('.gnupg/'):
         logger.info('Generated a new user key.')
         logger.info('Wrote user key fingerprint into file. Ready for the first run.')
     except Exception as e:
-        print('wtf')
-        #logger.error(f'{e} -- unable to generate new keypair.')
+        logger.error(f'{e} -- unable to generate new keypair.')
 else:
     logger.info('gnupg directory already exists, skipping...')
