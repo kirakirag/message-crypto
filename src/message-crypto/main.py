@@ -1,7 +1,7 @@
 import pki
 
-encrypt = pki.Encrypt.Encrypt()
-decrypt = pki.Decrypt.Decrypt(input('Enter your passphrase: '))
+# encrypt = pki.Encrypt.Encrypt()
+# decrypt = pki.Decrypt.Decrypt(input('Enter your passphrase: '))
 keys = pki.KeyManager.KeyManager()
 
 print(keys.gpg.list_keys())

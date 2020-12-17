@@ -32,15 +32,15 @@ class KeyManager:
         try:
             self.gpg.import_keys(key_data)
             self.logger.info('Successfully imported public key.')
+            return 'ok'
         except Exception as e:
             self.logger.error(f'{e} -- Unable to import public key.')
 
     def delete_key(self, fingerprint):
         try:
             status = self.gpg.delete_keys(fingerprint)
-            if (status != 'ok'):
-                raise RuntimeError(status)
             self.logger.info(f'Deleted key with fingerprint {fingerprint}')
+            return 'ok'
         except Exception as e:
             self.logger.error(f'{e} -- Unable to delete the key.')
 
