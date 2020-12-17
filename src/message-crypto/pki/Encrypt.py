@@ -20,12 +20,14 @@ class Encrypt:
     def __init__(self):
         self.gpg = gnupg.GPG(gnupghome='./.gnupg')
     
-    def encrypt_string(self, recipient, string):
+    def encrypt_string(self, string, recipient):
         '''
         This method encrypts the received string with recipient's public key.
         '''
         try:
-            encrypted = self.gpg.encrypt(string, recipient)
+            encrypted = self.gpg.encrypt(string, recipients=recipient, armor=True)
+            if not encrypted:
+                raise Exception('Something went wrong')
             return str(encrypted)
         except Exception as e:
             logger.error(f'{e} -- Unable to encrypt the provided string.')
