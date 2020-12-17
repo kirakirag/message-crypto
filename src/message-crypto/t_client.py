@@ -2,8 +2,9 @@ import asyncio
 
 from telethon import TelegramClient, events
 
-api_id = 2291221
-api_hash = 'f788a63b55201ecf2856e33922e777d1'
+# Remember to use your own values from my.telegram.org!
+api_id = 'some_api_id'
+api_hash = 'some_api_hash'
 client = TelegramClient('anon', api_id, api_hash)
 dialog_num = 0
 
