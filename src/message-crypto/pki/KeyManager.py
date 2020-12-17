@@ -49,12 +49,20 @@ class KeyManager:
         return key
 
     def get_key_by_id(self, id):
-        with open('keys', 'r') as f:
-            keys = f.readlines()
-            for i in keys:
-                if id in i:
-                    return i.split('-')[1]
-            return None
+        id = str(id)
+        try:
+            with open('keys', 'r') as f:
+                rec = None
+                keys = f.readlines()
+                for i in keys:
+                    if id in i:
+                        rec = i.split('-')[1].strip('\n')
+                if (rec):
+                    return rec
+                else:
+                    raise ValueError('User not found')
+        except Exception as e:
+            self.logger.error(f'{e}')
 
     def get_user_fingerprint(self):
         return self.__user_fingerprint

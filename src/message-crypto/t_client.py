@@ -5,9 +5,13 @@ from telethon import TelegramClient, events
 from pki import Encrypt, Decrypt, KeyManager
 
 # Remember to use your own values from my.telegram.org!
-api_id = 'some_api_id'
-api_hash = 'some_api_hash'
-client = TelegramClient('anon', api_id, api_hash)
+with open('credentials', 'r') as f:
+    data = f.readline().split(';')
+    api_id = int(data[0])
+    api_hash = data[1]
+
+
+client = TelegramClient('kira', api_id, api_hash)
 dialog_num = 0
 me_id = 0
 
@@ -26,6 +30,7 @@ async def my_event_handler(event):
     if chat.id == dialog_num:
         if event.text == '/encrypt' and sender.id == me_id:
             recipient = keys.get_key_by_id(chat.id)
+            print('Chat id = ', chat.id)
             if recipient:
                 await client.delete_messages(chat.id, [event.id])
                 message_to_send = encrypt_string(recipient, input('Enter message: '))
@@ -44,11 +49,18 @@ async def main():
         print(dialog.name, dialog.id)
 
     global dialog_num
-    dialog_num = int(input('Введите ID чата '))
+    dialog_num = int(input('Введите ID чата: '))
 
     async for message in client.iter_messages(dialog_num):
         sender = await message.get_sender()
-        print(sender.username, message.date, message.text)
+        if 'BEGIN PGP MESSAGE' in message.text:
+            data = decrypt_string(message.text)
+            if data:
+                print(sender.username, message.date, data)
+            else:
+                print('\n\n\n===couldnt decrypt===\n\n\n')
+        else:
+            print(sender.username, message.date, message.text)
 
 
 with client:
