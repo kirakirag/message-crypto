@@ -1,17 +1,6 @@
 import gnupg
 import logging
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
-
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-ch.setFormatter(formatter)
-
-logger.addHandler(ch)
 
 class KeyManager:
     '''
@@ -19,25 +8,41 @@ class KeyManager:
     '''
     def __init__(self):
         self.gpg = gnupg.GPG(gnupghome='./.gnupg')
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.INFO)
+
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.INFO)
+ 
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+        ch.setFormatter(formatter)
+
+        if (self.logger.hasHandlers()):
+            self.logger.handlers.clear()
+
+        self.logger.addHandler(ch)
         try:
             with open('userfp', 'r') as f:
                 self.__user_fingerprint = f.read()
         except Exception as e:
-            logger.warning(f'{e} -- Unable to read user key fingerprint.')
+            self.logger.warning(f'{e} -- Unable to read user key fingerprint.')
    
     def import_key(self, key_data):
         try:
             self.gpg.import_keys(key_data)
-            logger.info('Successfully imported public key.')
+            self.logger.info('Successfully imported public key.')
         except Exception as e:
-            logger.error(f'{e} -- Unable to import public key.')
+            self.logger.error(f'{e} -- Unable to import public key.')
 
     def delete_key(self, fingerprint):
         try:
-            self.gpg.delete_keys(fingerprint)
-            logger.info('Deleted key with fingerprint {fingerprint}')
+            status = self.gpg.delete_keys(fingerprint)
+            if (status != 'ok'):
+                raise RuntimeError(status)
+            self.logger.info(f'Deleted key with fingerprint {fingerprint}')
         except Exception as e:
-            logger.error(f'{e} -- Unable to delete the key.')
+            self.logger.error(f'{e} -- Unable to delete the key.')
 
     def get_user_key(self):
         key = str(self.gpg.export_keys(self.__user_fingerprint))
