@@ -7,26 +7,28 @@ api_id = 'some_api_id'
 api_hash = 'some_api_hash'
 client = TelegramClient('anon', api_id, api_hash)
 dialog_num = 0
+me_id = 0
 
 
 @client.on(events.NewMessage())
 async def my_event_handler(event):
     chat = await event.get_chat()
+    sender = await event.get_sender()
     global dialog_num
     if chat.id == dialog_num:
-        if event.text == '/encrypt':
+        if event.text == '/encrypt' and sender.id == me_id:
             await client.delete_messages(chat.id, [event.id])
             message_to_send = input()
             await client.send_message(chat, message_to_send)
         else:
-            sender = await event.get_sender()
             print(sender.username, event.date, event.text)
 
 
 async def main():
 
     me = await client.get_me()
-    print(me.id)
+    global me_id
+    me_id = me.id
 
     async for dialog in client.iter_dialogs():
         print(dialog.name, dialog.id)
