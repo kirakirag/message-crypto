@@ -48,5 +48,13 @@ class KeyManager:
         key = str(self.gpg.export_keys(self.__user_fingerprint))
         return key
 
+    def get_key_by_id(self, id):
+        with open('keys', 'r') as f:
+            keys = f.readlines()
+            for i in keys:
+                if id in i:
+                    return i.split('-')[1]
+            return None
+
     def get_user_fingerprint(self):
         return self.__user_fingerprint
