@@ -41,6 +41,5 @@ async def main():
 
 with client:
     client.loop.run_until_complete(main())
-    print(dialog_num)
     client.start()
     client.run_until_disconnected()
