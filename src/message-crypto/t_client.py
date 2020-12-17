@@ -2,9 +2,8 @@ import asyncio
 
 from telethon import TelegramClient, events
 
-# Remember to use your own values from my.telegram.org!
-api_id = 'some_api_id'
-api_hash = 'some_api_hash'
+api_id = 2291221
+api_hash = 'f788a63b55201ecf2856e33922e777d1'
 client = TelegramClient('anon', api_id, api_hash)
 dialog_num = 0
 
@@ -14,8 +13,13 @@ async def my_event_handler(event):
     chat = await event.get_chat()
     global dialog_num
     if chat.id == dialog_num:
-        sender = await event.get_sender()
-        print(sender.username, event.date, event.text)
+        if event.text == '/encrypt':
+            await client.delete_messages(chat.id, [event.id])
+            message_to_send = input()
+            await client.send_message(chat, message_to_send)
+        else:
+            sender = await event.get_sender()
+            print(sender.username, event.date, event.text)
 
 
 async def main():
