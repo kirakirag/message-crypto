@@ -6,7 +6,7 @@ from . import KeyManager, Encrypt, Decrypt
 
 home_fs = open_fs('.')
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('init')
 logger.setLevel(logging.INFO)
 
 ch = logging.StreamHandler()
@@ -15,6 +15,7 @@ ch.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 ch.setFormatter(formatter)
+
 
 logger.addHandler(ch)
 
@@ -37,6 +38,7 @@ if not os.path.exists('.gnupg/'):
         logger.info('Generated a new user key.')
         logger.info('Wrote user key fingerprint into file. Ready for the first run.')
     except Exception as e:
-        logger.error(f'{e} -- unable to generate new keypair.')
+        print('wtf')
+        #logger.error(f'{e} -- unable to generate new keypair.')
 else:
     logger.info('gnupg directory already exists, skipping...')
