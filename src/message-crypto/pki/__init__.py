@@ -2,7 +2,7 @@ import os
 from fs import open_fs
 import gnupg
 import logging
-import KeyManager, Encrypt, Decrypt 
+from . import KeyManager, Encrypt, Decrypt 
 
 home_fs = open_fs('.')
 
@@ -26,14 +26,17 @@ else:
 
 if not os.path.exists('.gnupg/'):
     home_fs.makedir(u'.gnupg/')
-    gpg = gnupg.GPG(gnupghome='./.gnupg')
+    gpg = gnupg.GPG(gnupghome='.gnupg/')
     logger.info('Created gnupg home directory.')
     
-    input_data = gpg.gen_key_input(key_type="RSA", key_length=4096, passphrase=input('Enter passphrase for your new key: '))
-    key = gpg.gen_key(input_data)
-    logger.info('Generated a new user key.')
-    with open('userfp', 'w') as f:
-        f.write(key.fingerprint)
-    logger.info('Wrote user key fingerprint into file.\n Ready for the first run.')
+    try:
+        input_data = gpg.gen_key_input(key_type="RSA", key_length=4096, passphrase=input('Enter passphrase for your new key: '))
+        key = gpg.gen_key(input_data)
+        with open('userfp', 'w') as f:
+            f.write(key.fingerprint)
+        logger.info('Generated a new user key.')
+        logger.info('Wrote user key fingerprint into file. Ready for the first run.')
+    except Exception as e:
+        logger.error(f'{e} -- unable to generate new keypair.')
 else:
     logger.info('gnupg directory already exists, skipping...')

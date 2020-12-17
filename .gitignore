@@ -1,4 +1,7 @@
-/.pytest_cache
+*pytest_cache
 /db
 /.gnupg
 /signatures
+/userfp
+*__pycache__
+/testing
