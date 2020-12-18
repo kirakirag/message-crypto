@@ -4,7 +4,7 @@ from telethon import TelegramClient, events
 
 from pki import Encrypt, Decrypt, KeyManager
 
-# Remember to use your own values from my.telegram.org!
+# Load Telegram credentials from file
 with open('credentials', 'r') as f:
     data = f.readline().split(';')
     api_id = int(data[0])
