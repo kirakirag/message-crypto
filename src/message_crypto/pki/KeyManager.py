@@ -4,7 +4,7 @@ import logging
 
 class KeyManager:
     '''
-    A class for key import/export/deletion, provides access to user's public key.
+    A class for key import/export/deletion, provides access to user's public key.\n
     
     Attributes:
         gpg -- a Gnu PG instance essential for accessing gpg binary.

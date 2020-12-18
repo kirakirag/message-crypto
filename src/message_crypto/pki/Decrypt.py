@@ -3,7 +3,8 @@ import logging
 
 class Decrypt:
     '''
-    A class for message decryption.
+    A class for message decryption. \n
+    Constructor takes user passphrase to unlock private key.\n
     Attributes:
         gpg -- a Gnu PG instance essential for accessing gpg binary.
     '''
