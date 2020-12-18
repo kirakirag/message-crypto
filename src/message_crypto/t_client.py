@@ -4,7 +4,7 @@ from telethon import TelegramClient, events
 
 from pki import Encrypt, Decrypt, KeyManager
 
-# Remember to use your own values from my.telegram.org!
+# Load Telegram credentials from file
 with open('credentials', 'r') as f:
     data = f.readline().split(';')
     api_id = int(data[0])
@@ -41,7 +41,7 @@ async def my_event_handler(event):
                 if data:
                     print(sender.username, event.date, data)
                 else:
-                    print('\n\n\n===couldnt decrypt===\n\n\n')
+                    print('\n\n\n===We do not have a private key for this message, skipping.===\n\n\n')
             else:
                 print(sender.username, event.date, event.text)
 
@@ -51,12 +51,17 @@ async def main():
     me = await client.get_me()
     global me_id
     me_id = me.id
+    dialogs = []
 
     async for dialog in client.iter_dialogs():
+        dialogs.append(dialog.id)
         print(dialog.name, dialog.id)
+        print('\n--------------')
 
     global dialog_num
-    dialog_num = int(input('Введите ID чата: '))
+    #dialog_num = int(input('Enter chat id: \n'))
+    while dialog_num not in dialogs:
+        dialog_num = int(input('Enter chat id: \n'))
 
     async for message in client.iter_messages(dialog_num):
         sender = await message.get_sender()
@@ -65,9 +70,10 @@ async def main():
             if data:
                 print(sender.username, message.date, data)
             else:
-                print('\n\n\n===couldnt decrypt===\n\n\n')
+                print('\n\n\n===We do not have a private key for this message, skipping.===\n\n\n')
         else:
             print(sender.username, message.date, message.text)
+            print('----------------')
 
 
 with client:
