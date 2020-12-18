@@ -7,6 +7,7 @@ class KeyManager:
     A class for key import/export/deletion, provides access to user's public key.
     '''
     def __init__(self):
+        '''A Gnu PG instance. Essential for accessing the gpg binary.'''
         self.gpg = gnupg.GPG(gnupghome='./.gnupg')
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
@@ -29,6 +30,9 @@ class KeyManager:
             self.logger.warning(f'{e} -- Unable to read user key fingerprint.')
    
     def import_key(self, key_data):
+        '''Import an ASCII-armored public key provided in key_data.
+        Same as running gpg --import --armor.
+        Returns ok if succeded and None otherwise.'''
         try:
             self.gpg.import_keys(key_data)
             self.logger.info('Successfully imported public key.')
@@ -37,6 +41,8 @@ class KeyManager:
             self.logger.error(f'{e} -- Unable to import public key.')
 
     def delete_key(self, fingerprint):
+        '''Delete key whose keyid or fingerprint is provided in fingerprint.
+        Returns ok if succeded and None otherwise.'''
         try:
             status = self.gpg.delete_keys(fingerprint)
             self.logger.info(f'Deleted key with fingerprint {fingerprint}')
@@ -45,10 +51,13 @@ class KeyManager:
             self.logger.error(f'{e} -- Unable to delete the key.')
 
     def get_user_key(self):
+        '''Return current users ASCII-armored public key data.'''
         key = str(self.gpg.export_keys(self.__user_fingerprint))
         return key
 
     def get_key_by_id(self, id):
+        '''Retrieve keydata associated with the id from storage file and return it.
+        If id is not found in storage, raises ValueError.'''
         id = str(id)
         try:
             with open('keys', 'r') as f:
@@ -65,4 +74,5 @@ class KeyManager:
             self.logger.error(f'{e}')
 
     def get_user_fingerprint(self):
+        '''Return user key fingerprint.'''
         return self.__user_fingerprint
