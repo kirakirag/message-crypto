@@ -4,6 +4,9 @@ import logging
 class Encrypt:
     '''
     A class for message encryption.
+
+    Attributes:
+        gpg -- a Gnu PG instance essential for accessing gpg binary.
     '''
     def __init__(self):
         self.gpg = gnupg.GPG(gnupghome='./.gnupg')
@@ -24,7 +27,8 @@ class Encrypt:
     
     def encrypt_string(self, recipient, string):
         '''
-        This method encrypts the received string with recipient's public key.
+        Encrypt the received string with recipient's public key.
+        If encryption is unsuccessful, raises RuntimeError.
         '''
         try:
             encrypted = self.gpg.encrypt(string, recipient)
